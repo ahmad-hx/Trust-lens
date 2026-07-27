@@ -2,6 +2,8 @@ import { useState } from "react";
 import "./App.css";
 import Tesseract from "tesseract.js";
 
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 function App() {
   // ==================================================
   // NAVIGATION
@@ -222,7 +224,7 @@ function App() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/analyze",
+        `${API}/api/analyze`,
         {
           method: "POST",
           headers: {
@@ -283,7 +285,7 @@ function App() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/analyze-url",
+        `${API}/api/analyze-url`,
         {
           method: "POST",
           headers: {
@@ -424,7 +426,7 @@ function App() {
       setExtractedText(text);
 
       const response = await fetch(
-        "http://localhost:5000/api/analyze",
+        `${API}/api/analyze`,
         {
           method: "POST",
           headers: {

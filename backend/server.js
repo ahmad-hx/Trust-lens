@@ -5,7 +5,7 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
 
 // Home Route
 app.get("/", (req, res) => {
@@ -23,17 +23,19 @@ app.get("/api/test", (req, res) => {
   });
 });
 
-// Analyze URL Route
-app.post("/api/analyze", (req, res) => {
-  const { url } = req.body;
+// Analyze Function
+const handleAnalysis = (req, res) => {
+  const input = req.body.url || req.body.message;
 
-  if (!url) {
+  if (!input) {
     return res.status(400).json({
       success: false,
-      message: "URL is required",
+      error: "URL or message is required",
+      message: "URL or message is required",
     });
   }
 
+  const url = input.trim();
   let result = {
     url,
     prediction: "Safe",
@@ -41,36 +43,69 @@ app.post("/api/analyze", (req, res) => {
     reasons: [],
   };
 
-  // Simple phishing detection rules
+  let trustScore = 95;
+  let indicators = [];
+  let category = "Low Risk";
+  let riskLevel = "Safe";
+  let recommendation = "This link / message appears safe to proceed.";
+
+  // Phishing detection rules
   if (url.includes("@")) {
     result.prediction = "Phishing";
     result.confidence = "98%";
     result.reasons.push("Contains '@' symbol");
+    trustScore = 15;
+    riskLevel = "High Risk";
+    category = "Phishing";
+    indicators.push("Contains '@' symbol in URL");
+    recommendation = "Do not open or click this link. High probability of phishing.";
   }
 
   if (url.includes("login") && url.includes("-")) {
     result.prediction = "Phishing";
     result.confidence = "96%";
     result.reasons.push("Suspicious login domain");
+    trustScore = 20;
+    riskLevel = "High Risk";
+    category = "Phishing";
+    indicators.push("Suspicious login keyword with hyphenated domain");
+    recommendation = "Caution: domain structure mimics credential harvesting sites.";
   }
 
   if (url.length > 80) {
     result.prediction = "Suspicious";
     result.confidence = "85%";
     result.reasons.push("Very long URL");
+    trustScore = 45;
+    riskLevel = "Medium Risk";
+    category = "Suspicious";
+    indicators.push("Unusually long URL length (>80 characters)");
   }
 
   if (url.includes("bit.ly") || url.includes("tinyurl")) {
     result.prediction = "Suspicious";
     result.confidence = "90%";
     result.reasons.push("Shortened URL detected");
+    trustScore = 40;
+    riskLevel = "Medium Risk";
+    category = "Suspicious";
+    indicators.push("Shortened URL link detected");
   }
 
   res.json({
     success: true,
     result,
+    trustScore,
+    riskLevel,
+    category,
+    indicators,
+    recommendation,
   });
-});
+};
+
+// Analyze Routes
+app.post("/api/analyze", handleAnalysis);
+app.post("/api/analyze-url", handleAnalysis);
 
 // 404 Route
 app.use((req, res) => {
