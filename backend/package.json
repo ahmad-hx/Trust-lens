@@ -1,14 +1,14 @@
 {
   "name": "trust-lens-backend",
   "version": "1.0.0",
-  "description": "Backend for Trust Lens AI",
+  "description": "Backend for TrustLens AI",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0"
   }
 }
