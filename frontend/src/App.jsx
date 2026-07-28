@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import Tesseract from "tesseract.js";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API = import.meta.env.VITE_API_URL || "https://trust-lens-vgtl.onrender.com";
 
 function App() {
   // ==================================================
