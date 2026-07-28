@@ -240,7 +240,7 @@ function App() {
 
       if (!response.ok) {
         throw new Error(
-          data.error || "Message analysis failed"
+          data.error || data.message || "Message analysis failed"
         );
       }
 
@@ -257,14 +257,14 @@ function App() {
         recommendation: data.recommendation,
       });
     } catch (error) {
-      console.error(
-        "Message analysis error:",
-        error
-      );
+      console.error("Message analysis error:", error);
+
+      if (error.response) {
+        console.log("Error response data:", error.response.data || error.response);
+      }
 
       alert(
-        error.message ||
-          "Unable to connect to TrustLens AI backend."
+        error.message || "Something went wrong"
       );
     } finally {
       setLoading(false);
@@ -301,7 +301,7 @@ function App() {
 
       if (!response.ok) {
         throw new Error(
-          data.error || "URL analysis failed"
+          data.error || data.message || "URL analysis failed"
         );
       }
 
@@ -319,14 +319,14 @@ function App() {
         analyzedURL: data.analyzedURL,
       });
     } catch (error) {
-      console.error(
-        "URL analysis error:",
-        error
-      );
+      console.error("URL analysis error:", error);
+
+      if (error.response) {
+        console.log("Error response data:", error.response.data || error.response);
+      }
 
       alert(
-        error.message ||
-          "Unable to analyze the URL."
+        error.message || "Something went wrong"
       );
     } finally {
       setUrlLoading(false);
@@ -439,13 +439,11 @@ function App() {
         }
       );
 
-      const analysis =
-        await response.json();
+      const analysis = await response.json();
 
       if (!response.ok) {
         throw new Error(
-          analysis.error ||
-            "Screenshot analysis failed"
+          analysis.error || analysis.message || "Screenshot analysis failed"
         );
       }
 
@@ -472,14 +470,14 @@ function App() {
         extractedText: text,
       });
     } catch (error) {
-      console.error(
-        "Screenshot analysis error:",
-        error
-      );
+      console.error("Screenshot analysis error:", error);
+
+      if (error.response) {
+        console.log("Error response data:", error.response.data || error.response);
+      }
 
       alert(
-        error.message ||
-          "Unable to analyze the screenshot."
+        error.message || "Something went wrong"
       );
     } finally {
       setOcrLoading(false);
